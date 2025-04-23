@@ -2,6 +2,8 @@ import torch as T
 import torch.nn as nn
 import numpy as np
 
+# Code from NCMCounterfactuals
+
 class Distribution(nn.Module):
     def __init__(self, u):
         super().__init__()

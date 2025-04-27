@@ -118,3 +118,22 @@ class CausalGraph:
     [] self._c_components -- will prob need to implement for L3 queries
     [] ancestors -- will prob need to implement
     '''
+
+def create_expanded_sfm(X, Z_cols, W_cols, Y):
+    v = [X,Y]
+    de = [(X,Y),]
+    be = []
+
+    for Z in Z_cols:
+        v.append(Z)
+        be.append((X,Z))
+        for W in W_cols:
+            de.append((Z,W))
+        de.append((Z,Y))
+
+    for W in W_cols:
+        v.append(W)
+        de.append((X,W))
+        de.append((W,Y))
+    
+    return CausalGraph(V=v, directed_edges=de, bidirected_edges=be)

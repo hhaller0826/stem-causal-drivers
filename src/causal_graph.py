@@ -119,7 +119,7 @@ class CausalGraph:
     [] ancestors -- will prob need to implement
     '''
 
-def create_expanded_sfm(X, Z_cols, W_cols, Y):
+def create_expanded_sfm_graph(X, Z_cols, W_cols, Y):
     v = [X,Y]
     de = [(X,Y),]
     be = []

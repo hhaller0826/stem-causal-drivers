@@ -1,5 +1,11 @@
 import torch
 from torch.utils.data import Dataset
+from torch.utils.data import DataLoader
+import pandas as pd
+
+from sklearn.discriminant_analysis import StandardScaler
+from sklearn.model_selection import train_test_split
+
 
 class NCMDataset(Dataset):
     def __init__(self, df, variables):
@@ -18,39 +24,23 @@ class NCMDataset(Dataset):
                 tensor = tensor.unsqueeze(0)
             sample[v] = tensor
         return sample
+    
+    def get_dataloader(self,batch_size=32,shuffle=True):
+        return DataLoader(self, batch_size=batch_size, shuffle=shuffle)
 
-# import torch
-# from torch.utils.data import Dataset
 
-# class NCMDataset(Dataset):
-#     def __init__(self, X, y):
-#         """
-#         X: pandas DataFrame or numpy array (n_samples x n_features)
-#         y: pandas Series/1D array (n_samples,) or numpy array
-#         """
-#         # If pandas, reset index to ensure continuous integer indexing
-#         try:
-#             self.X = X.reset_index(drop=True)
-#             self.y = y.reset_index(drop=True)
-#         except AttributeError:
-#             # assume they’re numpy arrays
-#             self.X = X
-#             self.y = y
+def tt_split(df, binary_cols, test_size=0.4, random_state=42):
+    dat_train, dat_test = train_test_split(df, test_size=test_size, random_state=random_state)
 
-#     def __len__(self):
-#         return len(self.X)
+    scaler = StandardScaler()
+    dat_train = scaler.fit_transform(dat_train)
+    dat_test = scaler.fit_transform(dat_test)
 
-#     def __getitem__(self, idx):
-#         # get features
-#         x = self.X.loc[idx].values if hasattr(self.X, 'loc') else self.X[idx]
-#         x = torch.tensor(x, dtype=torch.float)
-
-#         # get target
-#         y = self.y.loc[idx] if hasattr(self.y, 'loc') else self.y[idx]
-#         y = torch.tensor(y, dtype=torch.float)
-
-#         # if y is a scalar, make it a 1-element vector
-#         if y.ndim == 0:
-#             y = y.unsqueeze(0)
-
-#         return x, y
+    train_df = pd.DataFrame(dat_train, columns=df.columns)
+    test_df = pd.DataFrame(dat_test, columns=df.columns)
+    
+    for col in binary_cols:
+        train_df[col] = train_df[col].apply(lambda x: 0 if x <= 0 else 1)
+        test_df[col] = test_df[col].apply(lambda x: 0 if x <= 0 else 1)
+    
+    return train_df, test_df

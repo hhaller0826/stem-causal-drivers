@@ -24,7 +24,7 @@ import torch as T
 import torch.nn as nn
 
 from src.scm.distribution import Distribution
-# from ds.counterfactual import CTF
+# from src.scm.ctf import CTF
 
 
 def log(x):
@@ -84,8 +84,8 @@ class SCM(nn.Module):
         assert not set(do.keys()).difference(self.v)
         assert (n is None) != (u is None)
 
-        for k in do:
-            do[k] = do[k].to(self.device_param)
+        # for k in do:
+        #     do[k] = do[k].to(self.device_param)
 
         if u is None:
             u = self.pu.sample(n)

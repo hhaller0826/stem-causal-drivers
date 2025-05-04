@@ -13,9 +13,10 @@ Right now I am keeping everything as size=1 and we might just have to change tha
 
 class FF_NCM(SCM):
     def __init__(self, cg, v_size={}, default_v_size=1, u_size={},
-                 default_u_size=1, f={}, hyperparams=None):
+                 default_u_size=1, f={}, hyperparams=None, discrete_vals=[]):
         if hyperparams is None:
             hyperparams = dict()
+        self.discrete_vals = discrete_vals
 
         self.cg = cg
         self.u_size = {k: u_size.get(k, default_u_size) for k in self.cg.c2}
@@ -33,6 +34,6 @@ class FF_NCM(SCM):
             pu=UniformDistribution(self.cg.c2, self.u_size))
 
     def convert_evaluation(self, samples):
-        return {k: T.round(samples[k]) for k in samples}
+        return {k: T.round(samples[k]) if k in self.discrete_vals else samples[k] for k in samples}
 
     

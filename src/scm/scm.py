@@ -27,39 +27,39 @@ from src.scm.distribution import Distribution
 # from src.scm.ctf import CTF
 
 
-def log(x):
-    return T.log(x + 1e-8)
+# def log(x):
+#     return T.log(x + 1e-8)
 
 
-def expand_do(val, n):
-    if T.is_tensor(val):
-        return T.tile(val, (n, 1))
-    else:
-        return T.unsqueeze(T.ones(n, dtype=float) * val, 1)
+# def expand_do(val, n):
+#     if T.is_tensor(val):
+#         return T.tile(val, (n, 1))
+#     else:
+#         return T.unsqueeze(T.ones(n, dtype=float) * val, 1)
 
 
-def check_equal(input, val):
-    if T.is_tensor(val):
-        return T.all(T.eq(input, T.tile(val, (input.shape[0], 1))), dim=1).bool()
-    else:
-        return T.squeeze(input == val)
+# def check_equal(input, val):
+#     if T.is_tensor(val):
+#         return T.all(T.eq(input, T.tile(val, (input.shape[0], 1))), dim=1).bool()
+#     else:
+#         return T.squeeze(input == val)
 
-def soft_equals(input, val):
-    if T.is_tensor(val):
-        return T.sum(T.abs(T.tile(val, (input.shape[0], 1)) - input), dim=1)
-    else:
-        return T.squeeze(T.abs(val - input))
+# def soft_equals(input, val):
+#     if T.is_tensor(val):
+#         return T.sum(T.abs(T.tile(val, (input.shape[0], 1)) - input), dim=1)
+#     else:
+#         return T.squeeze(T.abs(val - input))
 
-def cross_entropy_compare(input, val):
-    if T.is_tensor(val):
-        raise NotImplementedError()
-    else:
-        if val == 1:
-            return T.sum(-log(input))
-        elif val == 0:
-            return T.sum(-log(1 - input))
-        else:
-            raise ValueError("Comparison to {} of type {} is not allowed.".format(val, type(val)))
+# def cross_entropy_compare(input, val):
+#     if T.is_tensor(val):
+#         raise NotImplementedError()
+#     else:
+#         if val == 1:
+#             return T.sum(-log(input))
+#         elif val == 0:
+#             return T.sum(-log(1 - input))
+#         else:
+#             raise ValueError("Comparison to {} of type {} is not allowed.".format(val, type(val)))
 
 
 class SCM(nn.Module):

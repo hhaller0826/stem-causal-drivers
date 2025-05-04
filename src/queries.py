@@ -1,5 +1,7 @@
 import torch as T
 
+from src.counterfactual import CTFTerm
+
 def rounded(data, dec=None):
     """
     data: dictionary of the form tensor([[val1],[val2],[val3],...])
@@ -47,6 +49,12 @@ def tensor_prob_dist(t):
     probs = counts.float() / counts.sum()
     return unique_vals, probs
 
+def print_sample_probs(sample):
+    for V in sample:
+        values, probs = tensor_prob_dist(sample[V])
+        for val, prob in zip(values, probs):
+            print(f"{V}={val.item()}: Probability {prob}")
+
 def get_conditioned_u(ncm, u=None, do={}, conditions={}, n=10000):
     if u is None:
         u = ncm.pu.sample(n=n)
@@ -62,19 +70,22 @@ def get_conditioned_u(ncm, u=None, do={}, conditions={}, n=10000):
         indices_to_keep = indices_to_keep.intersection(set(itk))
     return {k:u[k][list(indices_to_keep)] for k in u}, len(indices_to_keep)
 
-def compute_ctf(ncm, var, do={}, conditions={}, n=10000):
-    U, n_new = get_conditioned_u(ncm, conditions=conditions, n=n)
+def sample_ctf(ncm, term: CTFTerm, conditions={}, n=10000, U=None, get_prob=True):
+    if U is None:
+        U, n = get_conditioned_u(ncm, conditions=conditions, n=n)
 
     samples = dict()
     expanded_do_terms = dict()
-    # print(do)
-    for k in do:
-        # print(k,do[k])
+    for k in term.do_vals:
         if k == "nested":
-            # TODO
-            expanded_do_terms.update(compute_ctf("based on ctf term in v", get_prob=False))
+            nested_term = term.do_vals[k]
+            ctf = sample_ctf(ncm=ncm, term=nested_term, n=n, U=U, get_prob=False)
+            for var in nested_term.vars:
+                expanded_do_terms.update({var: ctf[var]})
         else:
-            expanded_do_terms[k] = expand_do(do[k],n_new)
+            expanded_do_terms[k] = expand_do(term.do_vals[k],n)
+        # instead of update based on select=var, update select=terms of this do, in case of nested
+    samples.update(ncm(n=None, u=U, do=expanded_do_terms, select=term.vars, evaluating=True))
+    return samples
 
-    samples = ncm(n=None, u=U, do=expanded_dos(do,n_new), evaluating=True)
-    return tensor_prob_dist(samples[var])
+

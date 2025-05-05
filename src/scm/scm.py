@@ -27,8 +27,8 @@ from src.scm.distribution import Distribution
 # from src.scm.ctf import CTF
 
 
-# def log(x):
-#     return T.log(x + 1e-8)
+def log(x):
+    return T.log(x + 1e-8)
 
 
 # def expand_do(val, n):
@@ -84,8 +84,8 @@ class SCM(nn.Module):
         assert not set(do.keys()).difference(self.v)
         assert (n is None) != (u is None)
 
-        # for k in do:
-        #     do[k] = do[k].to(self.device_param)
+        for k in do:
+            do[k] = do[k].to(self.device_param)
 
         if u is None:
             u = self.pu.sample(n)

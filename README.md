@@ -12,4 +12,6 @@ To train a standard feed-forward NCM and compute counterfactual queries on the e
 
 To train a standard ResNCM and compute counterfactual queries on the exam scores dataset, run all cells in exam_scores.ipynb.
 
+The baselines and the data cleaning/pre-processing code can be found in the ipynb filed titled ATDL_Baseline.ipynb
+
 Assignment video link: https://drive.google.com/file/d/1XpNQVQwvpIEqY9FyyI6iP7XeP6EEXRcR/view?usp=sharing 

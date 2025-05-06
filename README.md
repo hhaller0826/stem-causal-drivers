@@ -1,5 +1,7 @@
 # stem-causal-drivers
 
+The report is in titled ATDL Project Report.pdf
+
 To train a standard feed-forward NCM and compute counterfactual queries on the depression dataset, run all cells in depression.ipynb.
 
 To train a standard ResNCM and compute counterfactual queries on the depression dataset, run all cells in depressionresnet.ipynb.

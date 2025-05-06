@@ -168,6 +168,10 @@ def exp_se(ncm, treatment, outcome, xvals=None, u=None, n=10000):
 
     values, pY_condx = prob_ctf(outcome, ncm, CTFTerm({outcome}), conditions=xvals, u=U)
     _, pY_dox = prob_ctf(outcome, ncm, CTFTerm({outcome}, do_vals=xvals), u=U)
+    s1 = pY_condx.size()[0]
+    s0 = pY_dox.size()[0]
+    if s1 == 0: s1 = T.zeros(s0)
+    if s0 == 0: s0 = T.zeros(s1)
     exp_se = pY_condx - pY_dox
 
     for i in range(values.size()[0]):
@@ -183,6 +187,10 @@ def x_se(ncm, treatment, outcome, xvals=None, u=None, n=10000):
     x1 = {V: 1 for V in treatment}
     _, PY_dox0_condx1 = prob_ctf(outcome, ncm, CTFTerm({outcome},x0), conditions=x1, u=U)
     _, PY_dox0_condx0 = prob_ctf(outcome, ncm, CTFTerm({outcome},x0), conditions=x0, u=U)
+    s1 = PY_dox0_condx1.size()[0]
+    s0 = PY_dox0_condx0.size()[0]
+    if s1 == 0: s1 = T.zeros(s0)
+    if s0 == 0: s0 = T.zeros(s1)
     SE = PY_dox0_condx1 - PY_dox0_condx0
     return SE, U
 
